@@ -1,602 +1,671 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#000000">
-<title>Monthly PM Work Orders &mdash; Fiix Daily Rounds</title>
+<title>Monthly PM Work Orders - Fiix Daily Rounds</title>
+
 <style>
-/* ==================================================================
-   EDIT YOUR DATA HERE
-   ------------------------------------------------------------------
-   Scroll to the bottom of this file (in the <script> tag) to change
-   the month label and the three work orders. No external data file
-   is needed -- everything is in this single HTML file.
-================================================================== */
-
-:root {
-–stage-scale:    1;
-
-–bg:             #000000;
-–bg-vignette:    radial-gradient(ellipse at 50% 0%, #0b0d12 0%, #050609 38%, #000 70%);
-
-–panel-bg:       rgba(255, 255, 255, 0.030);
-–panel-border:   rgba(255, 255, 255, 0.065);
-–panel-shadow:   0 40px 90px -30px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.025);
-
-–row-bg-top:     rgba(255,255,255,0.030);
-–row-bg-bot:     rgba(255,255,255,0.012);
-–row-border:     rgba(255, 255, 255, 0.06);
-
-–tile-bg:        rgba(255, 255, 255, 0.025);
-–tile-border:    rgba(255, 255, 255, 0.07);
-
-–text:           #ededee;
-–text-soft:      #d4d4d8;
-–text-muted:     #8a8b94;
-
-–accent:         #7fb4ff;
-–accent-bright:  #a8cdff;
-–accent-soft:    rgba(127, 180, 255, 0.10);
-–accent-border:  rgba(127, 180, 255, 0.30);
-
-–warn:           #f87171;
-–warn-bright:    #fca5a5;
-–warn-soft:      rgba(248, 113, 113, 0.06);
-–warn-border:    rgba(248, 113, 113, 0.45);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
-  *:before, *:after { box-sizing: border-box; }
-
-html, body {
-width: 100%;
-height: 100%;
-background: #000;
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: #ededee;
 }
 
 body {
-font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Helvetica Neue”, Helvetica, Arial, sans-serif;
-background: #000;
-color: #ededee;
-overflow: hidden;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
+  font-family: Arial, Helvetica, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Viewport: fixed full-screen container that centers the stage */
-.viewport {
-position: fixed;
-top: 0; right: 0; bottom: 0; left: 0;
-width: 100%;
-height: 100%;
-background: #000;
-overflow: hidden;
-/* Old flexbox + new flexbox for max compatibility */
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
+#viewport {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
 }
 
-/* Stage: fixed 1920x1080 design surface that JS scales to fit any screen */
-.stage {
-position: relative;
-width: 1920px;
-height: 1080px;
-background: #000;
-background: radial-gradient(ellipse at 50% 0%, #0b0d12 0%, #050609 38%, #000 70%);
--webkit-transform: scale(1);
--ms-transform: scale(1);
-transform: scale(1);
--webkit-transform-origin: center center;
--ms-transform-origin: center center;
-transform-origin: center center;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-orient: vertical;
--webkit-box-direction: normal;
--ms-flex-direction: column;
--webkit-flex-direction: column;
-flex-direction: column;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-padding: 24px 0;
+#stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  margin-left: -960px;
+  margin-top: -540px;
+  overflow: hidden;
+  background: #000000;
+  background-image: radial-gradient(ellipse 70% 55% at 50% -8%, #0b0d12 0%, #050609 38%, #000000 70%);
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -webkit-transform-origin: center center;
+  -ms-transform-origin: center center;
+  transform-origin: center center;
 }
 
 /* HEADER */
-.header { text-align: center; }
+#header {
+  position: absolute;
+  left: 0;
+  top: 28px;
+  width: 1920px;
+  text-align: center;
+}
+
 .badge {
-display: inline-block;
-height: 44px;
-line-height: 42px;
-padding: 0 26px;
-border-radius: 100px;
-background: rgba(255,255,255,0.030);
-border: 1px solid rgba(255,255,255,0.065);
-color: #7fb4ff;
-font-size: 15px;
-font-weight: 600;
-letter-spacing: 0.20em;
+  display: inline-block;
+  height: 44px;
+  line-height: 44px;
+  padding: 0 26px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  color: #7fb4ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
 }
+
 .title {
-margin-top: 14px;
-font-size: 80px;
-font-weight: 800;
-letter-spacing: -0.025em;
-line-height: 1.02;
-color: #f5f5f6;
+  margin-top: 14px;
+  font-size: 80px;
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: #f5f5f6;
 }
+
 .subtitle {
-margin-top: 14px;
-font-size: 24px;
-font-weight: 400;
-line-height: 1.4;
-color: #8a8b94;
-max-width: 1320px;
+  margin-top: 14px;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #8a8b94;
 }
 
-/* CARD */
-.card {
-width: 1640px;
-margin-top: 38px;
-padding: 36px 48px 28px;
-border-radius: 26px;
-background: rgba(255,255,255,0.030);
-border: 1px solid rgba(255,255,255,0.065);
--webkit-box-shadow: 0 40px 90px -30px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.025);
-box-shadow: 0 40px 90px -30px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.025);
+/* MAIN CARD */
+#card {
+  position: absolute;
+  left: 140px;
+  top: 275px;
+  width: 1640px;
+  height: 740px;
+  padding: 36px 48px 28px 48px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.65);
 }
 
-/* SECTION HEAD */
+/* SECTION HEADERS */
 .section-head {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
+  display: table;
+  width: 100%;
 }
+
+.section-icon,
+.section-title {
+  display: table-cell;
+  vertical-align: middle;
+}
+
 .section-icon {
-width: 44px;
-height: 44px;
-margin-right: 14px;
-border-radius: 11px;
-background: rgba(255,255,255,0.025);
-border: 1px solid rgba(255,255,255,0.07);
-color: #7fb4ff;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-.section-icon svg { width: 24px; height: 24px; }
-.section-head h2 {
-font-size: 32px;
-font-weight: 700;
-letter-spacing: -0.018em;
-color: #f4f4f5;
+  width: 44px;
 }
 
-/* ROWS */
-.rows {
-margin-top: 22px;
+.icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #7fb4ff;
+  text-align: center;
+  line-height: 44px;
+  font-size: 22px;
+  font-weight: 700;
 }
+
+.section-title {
+  padding-left: 14px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #f4f4f5;
+}
+
+/* WORK ORDER ROWS */
+#rows {
+  margin-top: 22px;
+}
+
 .row {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-height: 78px;
-padding: 0 22px;
-margin-bottom: 12px;
-border-radius: 16px;
-background: -webkit-linear-gradient(top, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-background:    -moz-linear-gradient(top, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-background:         linear-gradient(180deg, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-border: 1px solid rgba(255,255,255,0.06);
+  display: table;
+  width: 100%;
+  height: 78px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
-.row:last-child { margin-bottom: 0; }
 
-.file-icon {
-width: 48px;
-height: 48px;
-margin-right: 22px;
-border-radius: 11px;
-background: rgba(255,255,255,0.025);
-border: 1px solid rgba(255,255,255,0.07);
-color: #7fb4ff;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+.row-icon,
+.row-title,
+.wo {
+  display: table-cell;
+  vertical-align: middle;
 }
-.file-icon svg { width: 24px; height: 24px; }
+
+.row-icon {
+  width: 76px;
+  padding-left: 22px;
+}
+
+.file-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #7fb4ff;
+  text-align: center;
+  line-height: 48px;
+  font-size: 21px;
+  font-weight: 700;
+}
 
 .row-title {
--webkit-box-flex: 1;
--ms-flex: 1;
--webkit-flex: 1;
-flex: 1;
-margin-right: 22px;
-font-size: 28px;
-font-weight: 700;
-letter-spacing: -0.012em;
-color: #f5f5f6;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #f5f5f6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .wo {
-display: inline-block;
-height: 42px;
-line-height: 40px;
-padding: 0 18px;
-border-radius: 10px;
-background: rgba(127, 180, 255, 0.10);
-border: 1px solid rgba(127, 180, 255, 0.30);
-color: #a8cdff;
-font-size: 21px;
-font-weight: 700;
-letter-spacing: 0.02em;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+  width: 165px;
+  padding-right: 22px;
+  text-align: right;
+}
+
+.wo span {
+  display: inline-block;
+  height: 42px;
+  line-height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: rgba(127, 180, 255, 0.10);
+  border: 1px solid rgba(127, 180, 255, 0.30);
+  color: #a8cdff;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* DIVIDER */
 .divider {
-height: 1px;
-margin: 22px 4px;
-background: -webkit-linear-gradient(left, transparent, rgba(255,255,255,0.10) 18%, rgba(255,255,255,0.10) 82%, transparent);
-background:         linear-gradient(90deg, transparent, rgba(255,255,255,0.10) 18%, rgba(255,255,255,0.10) 82%, transparent);
-border: 0;
+  height: 1px;
+  margin: 22px 4px;
+  background: rgba(255, 255, 255, 0.10);
 }
 
 /* STEPS */
-.steps {
-margin-top: 18px;
-list-style: none;
+#steps {
+  margin-top: 18px;
 }
+
 .step {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-margin-bottom: 14px;
-font-size: 22px;
-color: #d4d4d8;
-font-weight: 400;
+  display: table;
+  width: 100%;
+  min-height: 38px;
+  margin-bottom: 14px;
+  color: #d4d4d8;
+  font-size: 22px;
+  font-weight: 400;
 }
-.step:last-child { margin-bottom: 0; }
-.step .num {
-width: 38px;
-height: 38px;
-margin-right: 18px;
-border-radius: 50%;
-background: rgba(127, 180, 255, 0.08);
-border: 1px solid rgba(127, 180, 255, 0.22);
-color: #a8cdff;
-font-size: 16px;
-font-weight: 700;
-text-align: center;
-line-height: 36px;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+
+.num-cell,
+.step-text {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.num-cell {
+  width: 56px;
+}
+
+.num {
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(127, 180, 255, 0.08);
+  border: 1px solid rgba(127, 180, 255, 0.22);
+  color: #a8cdff;
+  line-height: 36px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* WARNING */
 .warning {
-margin-top: 22px;
-padding: 16px 24px;
-border-radius: 14px;
-background: rgba(248, 113, 113, 0.06);
-border: 2px solid rgba(248, 113, 113, 0.45);
-color: #fca5a5;
-font-size: 23px;
-font-weight: 500;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
+  margin-top: 22px;
+  padding: 16px 24px;
+  border-radius: 14px;
+  background: rgba(248, 113, 113, 0.06);
+  border: 2px solid rgba(248, 113, 113, 0.45);
+  color: #fca5a5;
+  font-size: 23px;
+  font-weight: 500;
 }
-.warning .icon {
-width: 30px;
-height: 30px;
-margin-right: 16px;
-color: #f87171;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+
+.warning-icon {
+  display: inline-block;
+  width: 34px;
+  color: #f87171;
+  font-size: 26px;
+  font-weight: 800;
+  vertical-align: middle;
 }
-.warning .icon svg { width: 28px; height: 28px; }
+
 .warning strong {
-color: #f87171;
-font-weight: 700;
+  color: #f87171;
+  font-weight: 800;
 }
 
 /* ANIMATIONS */
 .reveal {
-opacity: 0;
--webkit-transform: translateY(14px);
--ms-transform: translateY(14px);
-transform: translateY(14px);
--webkit-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
--webkit-animation-delay: 0s;
-animation-delay: 0s;
+  opacity: 0;
+  -webkit-transform: translateY(14px);
+  -ms-transform: translateY(14px);
+  transform: translateY(14px);
+  -webkit-animation-name: reveal;
+  animation-name: reveal;
+  -webkit-animation-duration: 700ms;
+  animation-duration: 700ms;
+  -webkit-animation-timing-function: ease-out;
+  animation-timing-function: ease-out;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
 }
+
+#row1 {
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+}
+
+#row2 {
+  -webkit-animation-delay: 1s;
+  animation-delay: 1s;
+}
+
+#row3 {
+  -webkit-animation-delay: 2s;
+  animation-delay: 2s;
+}
+
+#laborHead {
+  -webkit-animation-delay: 3s;
+  animation-delay: 3s;
+}
+
+#step1 {
+  -webkit-animation-delay: 3.5s;
+  animation-delay: 3.5s;
+}
+
+#step2 {
+  -webkit-animation-delay: 4s;
+  animation-delay: 4s;
+}
+
+#step3 {
+  -webkit-animation-delay: 4.5s;
+  animation-delay: 4.5s;
+}
+
+#step4 {
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+#warning {
+  opacity: 0;
+  -webkit-transform: translateY(14px);
+  -ms-transform: translateY(14px);
+  transform: translateY(14px);
+  -webkit-animation: reveal 700ms ease-out 6s forwards, warnPulse 2600ms ease-out 6.6s 1;
+  animation: reveal 700ms ease-out 6s forwards, warnPulse 2600ms ease-out 6.6s 1;
+}
+
 @-webkit-keyframes reveal {
-from { opacity: 0; -webkit-transform: translateY(14px); }
-to   { opacity: 1; -webkit-transform: translateY(0); }
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(14px);
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
+
 @keyframes reveal {
-from { opacity: 0; transform: translateY(14px); }
-to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(14px);
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
 
-#row-1      { -webkit-animation-delay: 0s;   animation-delay: 0s;   }
-#row-2      { -webkit-animation-delay: 1s;   animation-delay: 1s;   }
-#row-3      { -webkit-animation-delay: 2s;   animation-delay: 2s;   }
-#labor-head { -webkit-animation-delay: 3s;   animation-delay: 3s;   }
-#step-1     { -webkit-animation-delay: 3.5s; animation-delay: 3.5s; }
-#step-2     { -webkit-animation-delay: 4s;   animation-delay: 4s;   }
-#step-3     { -webkit-animation-delay: 4.5s; animation-delay: 4.5s; }
-#step-4     { -webkit-animation-delay: 5s;   animation-delay: 5s;   }
-
-#warn-box {
-opacity: 0;
--webkit-transform: translateY(14px);
--ms-transform: translateY(14px);
-transform: translateY(14px);
--webkit-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 6s forwards,
-warn-pulse 2.6s ease-out 6.55s 1;
-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 6s forwards,
-warn-pulse 2.6s ease-out 6.55s 1;
-}
-@-webkit-keyframes warn-pulse {
-0%   { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-18%  { -webkit-box-shadow: 0 0 50px 3px rgba(248,113,113,0.42); }
-35%  { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-55%  { -webkit-box-shadow: 0 0 36px 2px rgba(248,113,113,0.28); }
-100% { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-}
-@keyframes warn-pulse {
-0%   { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-18%  { box-shadow: 0 0 50px 3px rgba(248,113,113,0.42); }
-35%  { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-55%  { box-shadow: 0 0 36px 2px rgba(248,113,113,0.28); }
-100% { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
+@-webkit-keyframes warnPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+  18% {
+    box-shadow: 0 0 50px 3px rgba(248, 113, 113, 0.42);
+  }
+  35% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+  55% {
+    box-shadow: 0 0 36px 2px rgba(248, 113, 113, 0.28);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-.reveal, #warn-box {
--webkit-animation: none !important;
-animation: none !important;
-opacity: 1 !important;
--webkit-transform: none !important;
--ms-transform: none !important;
-transform: none !important;
+@keyframes warnPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+  18% {
+    box-shadow: 0 0 50px 3px rgba(248, 113, 113, 0.42);
+  }
+  35% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+  55% {
+    box-shadow: 0 0 36px 2px rgba(248, 113, 113, 0.28);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
 }
+
+/* ERROR STATE */
+.error-row .row-title {
+  color: #fca5a5;
+}
+
+.error-row .wo span {
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.06);
+  border-color: rgba(248, 113, 113, 0.45);
 }
 </style>
-
 </head>
+
 <body>
+<div id="viewport">
+  <div id="stage">
 
-<div class="viewport">
-  <div class="stage" id="stage">
-
-```
-<div class="header">
-  <div class="badge">FIIX DAILY ROUNDS</div>
-  <h1 class="title">Monthly PM Work Orders</h1>
-  <p class="subtitle">
-    Quick reference for technicians.<br>
-    Use the same monthly work order and log labor in the Labor Tasks tab.
-  </p>
-</div>
-
-<div class="card">
-
-  <!-- PMs to open in Fiix -->
-  <div class="section-head">
-    <span class="section-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="8" y="2" width="8" height="4" rx="1"/>
-        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-        <path d="M9 12h6"/><path d="M9 16h6"/>
-      </svg>
-    </span>
-    <h2>PMs to open in Fiix</h2>
-  </div>
-
-  <div class="rows">
-    <div class="row reveal" id="row-1">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-1">Loading&hellip;</span>
-      <span class="wo" id="wo-1">&mdash;</span>
+    <div id="header">
+      <div class="badge">FIIX DAILY ROUNDS</div>
+      <div class="title">Monthly PM Work Orders</div>
+      <div class="subtitle">
+        Quick reference for technicians.<br>
+        Use the same monthly work order and log labor in the Labor Tasks tab.
+      </div>
     </div>
-    <div class="row reveal" id="row-2">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-2">Loading&hellip;</span>
-      <span class="wo" id="wo-2">&mdash;</span>
+
+    <div id="card">
+
+      <div class="section-head">
+        <div class="section-icon">
+          <div class="icon-box">I</div>
+        </div>
+        <div class="section-title">PMs to open in Fiix</div>
+      </div>
+
+      <div id="rows">
+        <div class="row reveal" id="row1">
+          <div class="row-icon"><div class="file-box">WO</div></div>
+          <div class="row-title" id="title1">Loading...</div>
+          <div class="wo"><span id="wo1">---</span></div>
+        </div>
+
+        <div class="row reveal" id="row2">
+          <div class="row-icon"><div class="file-box">WO</div></div>
+          <div class="row-title" id="title2">Loading...</div>
+          <div class="wo"><span id="wo2">---</span></div>
+        </div>
+
+        <div class="row reveal" id="row3">
+          <div class="row-icon"><div class="file-box">WO</div></div>
+          <div class="row-title" id="title3">Loading...</div>
+          <div class="wo"><span id="wo3">---</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-head reveal" id="laborHead">
+        <div class="section-icon">
+          <div class="icon-box">L</div>
+        </div>
+        <div class="section-title">How to log labor</div>
+      </div>
+
+      <div id="steps">
+        <div class="step reveal" id="step1">
+          <div class="num-cell"><span class="num">1</span></div>
+          <div class="step-text">Open the monthly PM work order.</div>
+        </div>
+
+        <div class="step reveal" id="step2">
+          <div class="num-cell"><span class="num">2</span></div>
+          <div class="step-text">Go to Labor Tasks and add a new line.</div>
+        </div>
+
+        <div class="step reveal" id="step3">
+          <div class="num-cell"><span class="num">3</span></div>
+          <div class="step-text">In Description, enter the date first.</div>
+        </div>
+
+        <div class="step reveal" id="step4">
+          <div class="num-cell"><span class="num">4</span></div>
+          <div class="step-text">Select your name, enter hours spent, then save and exit.</div>
+        </div>
+      </div>
+
+      <div class="warning" id="warning">
+        <span class="warning-icon">!</span>
+        <strong>DO NOT CLOSE THE WORK ORDER</strong> — leave it open for the next technician.
+      </div>
+
     </div>
-    <div class="row reveal" id="row-3">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-3">Loading&hellip;</span>
-      <span class="wo" id="wo-3">&mdash;</span>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- How to log labor -->
-  <div class="section-head reveal" id="labor-head">
-    <span class="section-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-    </span>
-    <h2>How to log labor</h2>
-  </div>
-
-  <ol class="steps">
-    <li class="step reveal" id="step-1"><span class="num">1</span><span>Open the monthly PM work order.</span></li>
-    <li class="step reveal" id="step-2"><span class="num">2</span><span>Go to Labor Tasks and add a new line.</span></li>
-    <li class="step reveal" id="step-3"><span class="num">3</span><span>In Description, enter the date first.</span></li>
-    <li class="step reveal" id="step-4"><span class="num">4</span><span>Select your name, enter hours spent, then save and exit.</span></li>
-  </ol>
-
-  <!-- Warning -->
-  <div class="warning" id="warn-box" role="alert">
-    <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-    </span>
-    <div><strong>DO NOT CLOSE THE WORK ORDER</strong> &mdash; leave it open for the next technician.</div>
-  </div>
-
-</div>
-```
-
   </div>
 </div>
 
 <script>
-/* =================================================================
-   ===>  EDIT YOUR DATA HERE  <===
-   Change the month and the three work orders below.
-   You can also change "WO " to a different prefix if you like.
-================================================================= */
-
-var MONTH = "MAY";
-
-var WORK_ORDERS = [
-  { name: "Compressor PM",      wo: "12345" },
-  { name: "HVAC Inspection",    wo: "12346" },
-  { name: "Generator Service",  wo: "12347" }
-];
-
-/* =================================================================
-   No need to edit below this line.
-================================================================= */
-
 (function () {
-  // 1) Populate work orders
-  function setText(id, text) {
-    var el = document.getElementById(id);
-    if (el) {
-      if (typeof el.textContent !== "undefined") {
-        el.textContent = text;
-      } else {
-        el.innerText = text;
-      }
-    }
-  }
-  for (var i = 0; i < 3; i++) {
-    var item = WORK_ORDERS[i] || { name: "", wo: "" };
-    setText("title-" + (i + 1), MONTH + " - " + item.name);
-    setText("wo-" + (i + 1), "WO " + item.wo);
-  }
+  "use strict";
 
-  // 2) Scale the 1920x1080 stage to fit the screen perfectly
-  var stage = document.getElementById("stage");
+  /*
+    FIT MODE:
+    "contain" = shows the full 1920x1080 layout without cropping.
+    "cover"   = fills the whole screen, but can crop on non-16:9 displays.
+
+    For normal TVs, keep "contain".
+  */
+  var FIT_MODE = "contain";
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (!el) {
+      return;
+    }
+
+    while (el.firstChild) {
+      el.removeChild(el.firstChild);
+    }
+
+    el.appendChild(document.createTextNode(value));
+  }
 
   function fitStage() {
-    var w = window.innerWidth  || document.documentElement.clientWidth  || document.body.clientWidth  || 0;
-    var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
-    if (w < 50 || h < 50) return;
-    var scale = Math.min(w / 1920, h / 1080);
-    if (!scale || !isFinite(scale)) return;
-    if (stage) {
-      stage.style.webkitTransform = "scale(" + scale + ")";
-      stage.style.msTransform     = "scale(" + scale + ")";
-      stage.style.transform       = "scale(" + scale + ")";
+    var stage = document.getElementById("stage");
+    if (!stage) {
+      return;
+    }
+
+    var w = window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth ||
+            1920;
+
+    var h = window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight ||
+            1080;
+
+    if (w < 100 || h < 100) {
+      return;
+    }
+
+    var scaleX = w / 1920;
+    var scaleY = h / 1080;
+    var scale;
+
+    if (FIT_MODE === "cover") {
+      scale = Math.max(scaleX, scaleY);
+    } else {
+      scale = Math.min(scaleX, scaleY);
+    }
+
+    stage.style.webkitTransform = "scale(" + scale + ")";
+    stage.style.msTransform = "scale(" + scale + ")";
+    stage.style.transform = "scale(" + scale + ")";
+  }
+
+  function loadJSON(callback) {
+    var url = "data.json?v=" + new Date().getTime();
+
+    if (window.XMLHttpRequest) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              callback(null, JSON.parse(xhr.responseText));
+            } catch (e) {
+              callback(e, null);
+            }
+          } else {
+            callback(new Error("Could not load data.json. HTTP status: " + xhr.status), null);
+          }
+        }
+      };
+
+      xhr.open("GET", url, true);
+      xhr.send();
+    } else {
+      callback(new Error("XMLHttpRequest not supported."), null);
+    }
+  }
+
+  function renderData(data) {
+    var month = "";
+
+    if (data && data.month) {
+      month = String(data.month).toUpperCase();
+    }
+
+    var orders = [];
+
+    if (data && data.workOrders && data.workOrders.length) {
+      orders = data.workOrders;
+    }
+
+    var i;
+
+    for (i = 0; i < 3; i++) {
+      var item = orders[i] || {};
+      var name = item.name || "";
+      var wo = item.wo || "";
+
+      setText("title" + (i + 1), month + " - " + name);
+      setText("wo" + (i + 1), "WO " + wo);
+    }
+  }
+
+  function showError() {
+    var fallback = [
+      {
+        title: "Could not load data.json",
+        wo: "ERR"
+      },
+      {
+        title: "Make sure data.json is next to index.html",
+        wo: "---"
+      },
+      {
+        title: "Use the GitHub Pages URL, not the GitHub repo URL",
+        wo: "---"
+      }
+    ];
+
+    var i;
+
+    for (i = 0; i < fallback.length; i++) {
+      var row = document.getElementById("row" + (i + 1));
+      if (row) {
+        row.className = row.className + " error-row";
+      }
+
+      setText("title" + (i + 1), fallback[i].title);
+      setText("wo" + (i + 1), fallback[i].wo);
     }
   }
 
   fitStage();
+
+  loadJSON(function (err, data) {
+    if (err) {
+      showError();
+      return;
+    }
+
+    renderData(data);
+  });
+
   if (window.addEventListener) {
     window.addEventListener("load", fitStage, false);
     window.addEventListener("resize", fitStage, false);
@@ -605,7 +674,7 @@ var WORK_ORDERS = [
     window.attachEvent("onload", fitStage);
     window.attachEvent("onresize", fitStage);
   }
-  // Some signage WebViews report 0x0 on first paint -- retry a few times
+
   setTimeout(fitStage, 100);
   setTimeout(fitStage, 500);
   setTimeout(fitStage, 1500);
