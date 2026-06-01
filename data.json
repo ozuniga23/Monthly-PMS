@@ -1,23 +1,23 @@
 {
   "_help_": "============================================================ EDIT THIS FILE EACH MONTH ============================================================ 1) Change 'month' to the current month (e.g. JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC). The same value applies to all three rows. 2) Update each 'wo' number to match the new monthly work order. The 'name' fields rarely change. Save the file and refresh the dashboard. ============================================================",
 
-  "month": "MAY",
+  "month": "JUNE",
 
   "workOrders": [
     {
       "_note": "Row 1 — Boiler (first to appear)",
       "name": "Boiler Round Checklist",
-      "wo": "5935"
+      "wo": "6728"
     },
     {
       "_note": "Row 2 — Refrigeration",
       "name": "Refrigeration Round Checklist",
-      "wo": "5936"
+      "wo": "5727"
     },
     {
       "_note": "Row 3 — Plant Rounds",
       "name": "Plant Round Checklist",
-      "wo": "5937"
+      "wo": "5726"
     }
   ]
 }
