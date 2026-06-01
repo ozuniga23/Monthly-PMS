@@ -1,7 +1,7 @@
 {
   "_help_": "============================================================ EDIT THIS FILE EACH MONTH ============================================================ 1) Change 'month' to the current month (e.g. JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC). The same value applies to all three rows. 2) Update each 'wo' number to match the new monthly work order. The 'name' fields rarely change. Save the file and refresh the dashboard. ============================================================",
 
-  "month": "JUNE",
+  "month": "JUN",
 
   "workOrders": [
     {
