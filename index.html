@@ -1,509 +1,180 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<title>Monthly PM Work Orders &mdash; Fiix Daily Rounds</title>
+<meta name="theme-color" content="#f1f4f8">
+<title>Monthly PM Work Orders — Fiix Daily Rounds</title>
 <style>
-/* ==================================================================
-   EDIT YOUR DATA at the bottom of this file (in the <script> tag).
-================================================================== */
+  :root{ --accent: oklch(0.55 0.15 255); }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ width:100%; height:100%; background:#eef1f5; overflow:hidden; }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;
+    color:#16181d; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
-  *:before, *:after { box-sizing: border-box; }
+  .viewport{
+    position:fixed; inset:0; overflow:hidden;
+    background:radial-gradient(120% 95% at 50% -12%,#ffffff 0%,#f1f4f8 52%,#e7ecf2 100%);
+  }
+  .fitwrap{ position:absolute; left:0; right:0; top:0; bottom:12px; display:flex; align-items:center; justify-content:center; }
+  .stage{ width:1920px; flex:none; transform-origin:center center; display:flex; flex-direction:column; align-items:center; gap:30px; padding:12px 0; }
 
-html, body {
-width: 100%;
-height: 100%;
-background: #000;
-overflow: hidden;
-}
+  /* HEADER */
+  .header{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px; }
+  .badge{
+    display:inline-flex; align-items:center; height:46px; padding:0 26px; border-radius:100px;
+    background:#fff; border:1px solid rgba(16,24,40,0.08); box-shadow:0 1px 2px rgba(16,24,40,0.05);
+    color:color-mix(in oklch, var(--accent) 82%, #0b1020); font-size:18px; font-weight:700; letter-spacing:.2em;
+  }
+  .title{ font-size:84px; font-weight:700; letter-spacing:-.022em; line-height:1.04; }
+  .subtitle{ font-size:30px; font-weight:400; line-height:1.4; color:#4b5563; max-width:1280px; }
 
-body {
-font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Helvetica Neue”, Helvetica, Arial, sans-serif;
-color: #ededee;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-}
+  /* CARD */
+  .card{
+    width:1620px; padding:40px 52px; border-radius:28px; background:#fff;
+    border:1px solid rgba(16,24,40,0.07);
+    box-shadow:0 1px 2px rgba(16,24,40,0.04), 0 30px 60px -30px rgba(16,24,40,0.28);
+  }
 
-/* Viewport: full-screen container that centers the stage */
-.viewport {
-position: fixed;
-top: 0; right: 0; bottom: 0; left: 0;
-width: 100%;
-height: 100%;
-background: #000;
-overflow: hidden;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
-}
+  .section{ display:flex; align-items:center; gap:16px; }
+  .section .ico{
+    width:56px; height:56px; border-radius:14px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in oklch, var(--accent) 10%, white); color:var(--accent);
+  }
+  .section h2{ font-size:40px; font-weight:700; letter-spacing:-.015em; }
 
-/* Stage: 1920px wide design canvas. Height grows to fit content,
-then JS scales the whole thing to fit any screen perfectly. */
-.stage {
-position: relative;
-width: 1920px;
-background: radial-gradient(ellipse at 50% 0%, #0b0d12 0%, #050609 38%, #000 70%);
--webkit-transform: scale(1);
--ms-transform: scale(1);
-transform: scale(1);
--webkit-transform-origin: center center;
--ms-transform-origin: center center;
-transform-origin: center center;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-orient: vertical;
--webkit-box-direction: normal;
--ms-flex-direction: column;
--webkit-flex-direction: column;
-flex-direction: column;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-padding: 32px 0 28px;
-}
+  .rows{ display:flex; flex-direction:column; gap:14px; margin-top:22px; }
+  .row{
+    display:flex; align-items:center; gap:22px; height:96px; padding:0 26px; border-radius:18px;
+    background:#f7f9fb; border:1px solid rgba(16,24,40,0.07);
+  }
+  .row .ico{
+    width:56px; height:56px; border-radius:14px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in oklch, var(--accent) 9%, white); color:var(--accent);
+  }
+  .row-title{ flex:1; min-width:0; font-size:38px; font-weight:600; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row-title .mo{ font-weight:700; color:color-mix(in oklch, var(--accent) 80%, #0b1020); }
+  .row-title .dash{ color:#c2c8d2; padding:0 12px; }
+  .wo{
+    flex:none; display:inline-flex; align-items:center; height:52px; padding:0 22px; border-radius:12px;
+    background:color-mix(in oklch, var(--accent) 9%, white);
+    border:1px solid color-mix(in oklch, var(--accent) 26%, transparent);
+    color:color-mix(in oklch, var(--accent) 80%, #0b1020); font-size:28px; font-weight:700; letter-spacing:.01em;
+  }
 
-/* HEADER */
-.header { text-align: center; }
-.badge {
-display: inline-block;
-height: 42px;
-line-height: 40px;
-padding: 0 26px;
-border-radius: 100px;
-background: rgba(255,255,255,0.030);
-border: 1px solid rgba(255,255,255,0.065);
-color: #7fb4ff;
-font-size: 15px;
-font-weight: 600;
-letter-spacing: 0.20em;
-}
-.title {
-margin-top: 12px;
-font-size: 70px;
-font-weight: 800;
-letter-spacing: -0.025em;
-line-height: 1.02;
-color: #f5f5f6;
-}
-.subtitle {
-margin-top: 12px;
-font-size: 22px;
-font-weight: 400;
-line-height: 1.4;
-color: #8a8b94;
-max-width: 1320px;
-}
+  .divider{ height:1px; margin:26px 4px; border:0; background:linear-gradient(90deg,transparent,rgba(16,24,40,0.10) 16%,rgba(16,24,40,0.10) 84%,transparent); }
 
-/* CARD */
-.card {
-width: 1640px;
-margin-top: 28px;
-padding: 30px 48px 24px;
-border-radius: 26px;
-background: rgba(255,255,255,0.030);
-border: 1px solid rgba(255,255,255,0.065);
--webkit-box-shadow: 0 40px 90px -30px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.025);
-box-shadow: 0 40px 90px -30px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.025);
-}
+  .steps{ display:grid; grid-template-columns:1fr 1fr; gap:18px 48px; margin-top:22px; list-style:none; }
+  .step{ display:flex; align-items:center; gap:20px; font-size:28px; color:#3f4451; }
+  .step .num{
+    width:46px; height:46px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in oklch, var(--accent) 9%, white);
+    border:1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+    color:color-mix(in oklch, var(--accent) 80%, #0b1020); font-size:22px; font-weight:700;
+  }
 
-/* SECTION HEAD */
-.section-head {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-}
-.section-icon {
-width: 44px;
-height: 44px;
-margin-right: 14px;
-border-radius: 11px;
-background: rgba(255,255,255,0.025);
-border: 1px solid rgba(255,255,255,0.07);
-color: #7fb4ff;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-.section-icon svg { width: 24px; height: 24px; }
-.section-head h2 {
-font-size: 30px;
-font-weight: 700;
-letter-spacing: -0.018em;
-color: #f4f4f5;
-}
+  .warning{
+    margin-top:24px; display:flex; align-items:center; gap:18px; padding:20px 28px; border-radius:16px;
+    background:#fdf2f1; border:1px solid rgba(220,38,38,0.30); color:#9f2d2d; font-size:30px; font-weight:500;
+  }
+  .warning .ico{ flex:none; width:38px; height:38px; color:#dc2626; display:flex; align-items:center; justify-content:center; }
+  .warning strong{ color:#c92a2a; font-weight:700; }
 
-/* ROWS */
-.rows { margin-top: 18px; }
-.row {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-height: 72px;
-padding: 0 22px;
-margin-bottom: 10px;
-border-radius: 16px;
-background: -webkit-linear-gradient(top, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-background:    -moz-linear-gradient(top, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-background:         linear-gradient(180deg, rgba(255,255,255,0.030), rgba(255,255,255,0.012));
-border: 1px solid rgba(255,255,255,0.06);
-}
-.row:last-child { margin-bottom: 0; }
+  /* PROGRESS BAR */
+  .progress{ position:absolute; left:0; right:0; bottom:0; height:12px; background:rgba(16,24,40,0.07); }
+  .progress-fill{
+    height:100%; width:0; border-top-right-radius:12px; border-bottom-right-radius:12px;
+    background:linear-gradient(90deg, color-mix(in oklch, var(--accent) 60%, white), var(--accent));
+    box-shadow:0 0 22px color-mix(in oklch, var(--accent) 50%, transparent);
+    animation:barfill 30s linear infinite;   /* <-- 30 second progress bar */
+  }
+  @keyframes barfill{ from{ width:0; } to{ width:100%; } }
 
-.file-icon {
-width: 46px;
-height: 46px;
-margin-right: 22px;
-border-radius: 11px;
-background: rgba(255,255,255,0.025);
-border: 1px solid rgba(255,255,255,0.07);
-color: #7fb4ff;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
--webkit-box-pack: center;
--ms-flex-pack: center;
--webkit-justify-content: center;
-justify-content: center;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-.file-icon svg { width: 24px; height: 24px; }
+  /* BUBBLY REVEAL (~8s cascade) */
+  .pop{ animation:pop .9s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pop{ 0%{ opacity:0; transform:translateY(24px) scale(.9); } 100%{ opacity:1; transform:translateY(0) scale(1); } }
+  .d1{animation-delay:.2s} .d2{animation-delay:.55s} .d3{animation-delay:.95s}
+  .d4{animation-delay:1.6s} .d5{animation-delay:2.2s} .d6{animation-delay:2.85s} .d7{animation-delay:3.5s}
+  .d8{animation-delay:4.5s} .d9{animation-delay:5.2s} .d10{animation-delay:5.55s} .d11{animation-delay:5.9s} .d12{animation-delay:6.25s}
 
-.row-title {
--webkit-box-flex: 1;
--ms-flex: 1;
--webkit-flex: 1;
-flex: 1;
-margin-right: 22px;
-font-size: 26px;
-font-weight: 700;
-letter-spacing: -0.012em;
-color: #f5f5f6;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
+  .warning.pop{ animation:pop .9s cubic-bezier(.34,1.56,.64,1) 6.9s both, warnGlow 6s ease-in-out 8s infinite; }
+  @keyframes warnGlow{ 0%{box-shadow:0 0 0 0 rgba(220,38,38,0);} 8%{box-shadow:0 0 56px 3px rgba(220,38,38,0.22);} 24%{box-shadow:0 0 0 0 rgba(220,38,38,0);} 100%{box-shadow:0 0 0 0 rgba(220,38,38,0);} }
 
-.wo {
-display: inline-block;
-height: 40px;
-line-height: 38px;
-padding: 0 18px;
-border-radius: 10px;
-background: rgba(127, 180, 255, 0.10);
-border: 1px solid rgba(127, 180, 255, 0.30);
-color: #a8cdff;
-font-size: 20px;
-font-weight: 700;
-letter-spacing: 0.02em;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-/* DIVIDER */
-.divider {
-height: 1px;
-margin: 18px 4px;
-background: -webkit-linear-gradient(left, transparent, rgba(255,255,255,0.10) 18%, rgba(255,255,255,0.10) 82%, transparent);
-background:         linear-gradient(90deg, transparent, rgba(255,255,255,0.10) 18%, rgba(255,255,255,0.10) 82%, transparent);
-border: 0;
-}
-
-/* STEPS */
-.steps {
-margin-top: 14px;
-list-style: none;
-}
-.step {
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-margin-bottom: 12px;
-font-size: 21px;
-color: #d4d4d8;
-}
-.step:last-child { margin-bottom: 0; }
-.step .num {
-width: 36px;
-height: 36px;
-margin-right: 18px;
-border-radius: 50%;
-background: rgba(127, 180, 255, 0.08);
-border: 1px solid rgba(127, 180, 255, 0.22);
-color: #a8cdff;
-font-size: 16px;
-font-weight: 700;
-text-align: center;
-line-height: 34px;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-/* WARNING */
-.warning {
-margin-top: 18px;
-padding: 14px 24px;
-border-radius: 14px;
-background: rgba(248, 113, 113, 0.06);
-border: 2px solid rgba(248, 113, 113, 0.45);
-color: #fca5a5;
-font-size: 22px;
-font-weight: 500;
-display: -webkit-box;
-display: -ms-flexbox;
-display: -webkit-flex;
-display: flex;
--webkit-box-align: center;
--ms-flex-align: center;
--webkit-align-items: center;
-align-items: center;
-}
-.warning .icon {
-width: 30px;
-height: 30px;
-margin-right: 16px;
-color: #f87171;
--ms-flex-negative: 0;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-.warning .icon svg { width: 28px; height: 28px; }
-.warning strong {
-color: #f87171;
-font-weight: 700;
-}
-
-/* ANIMATIONS */
-.reveal {
-opacity: 0;
--webkit-transform: translateY(14px);
--ms-transform: translateY(14px);
-transform: translateY(14px);
--webkit-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
-@-webkit-keyframes reveal {
-from { opacity: 0; -webkit-transform: translateY(14px); }
-to   { opacity: 1; -webkit-transform: translateY(0); }
-}
-@keyframes reveal {
-from { opacity: 0; transform: translateY(14px); }
-to   { opacity: 1; transform: translateY(0); }
-}
-
-#row-1      { -webkit-animation-delay: 0s;   animation-delay: 0s;   }
-#row-2      { -webkit-animation-delay: 1s;   animation-delay: 1s;   }
-#row-3      { -webkit-animation-delay: 2s;   animation-delay: 2s;   }
-#labor-head { -webkit-animation-delay: 3s;   animation-delay: 3s;   }
-#step-1     { -webkit-animation-delay: 3.5s; animation-delay: 3.5s; }
-#step-2     { -webkit-animation-delay: 4s;   animation-delay: 4s;   }
-#step-3     { -webkit-animation-delay: 4.5s; animation-delay: 4.5s; }
-#step-4     { -webkit-animation-delay: 5s;   animation-delay: 5s;   }
-
-#warn-box {
-opacity: 0;
--webkit-transform: translateY(14px);
--ms-transform: translateY(14px);
-transform: translateY(14px);
--webkit-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 6s forwards,
-warn-pulse 2.6s ease-out 6.55s 1;
-animation: reveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 6s forwards,
-warn-pulse 2.6s ease-out 6.55s 1;
-}
-@-webkit-keyframes warn-pulse {
-0%   { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-18%  { -webkit-box-shadow: 0 0 50px 3px rgba(248,113,113,0.42); }
-35%  { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-55%  { -webkit-box-shadow: 0 0 36px 2px rgba(248,113,113,0.28); }
-100% { -webkit-box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-}
-@keyframes warn-pulse {
-0%   { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-18%  { box-shadow: 0 0 50px 3px rgba(248,113,113,0.42); }
-35%  { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-55%  { box-shadow: 0 0 36px 2px rgba(248,113,113,0.28); }
-100% { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-.reveal, #warn-box {
--webkit-animation: none !important;
-animation: none !important;
-opacity: 1 !important;
--webkit-transform: none !important;
--ms-transform: none !important;
-transform: none !important;
-}
-}
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:1ms !important; animation-delay:0ms !important; } }
 </style>
-
 </head>
 <body>
 
 <div class="viewport">
-  <div class="stage" id="stage">
+  <div class="fitwrap">
+    <div class="stage" id="stage">
 
-```
-<div class="header">
-  <div class="badge">FIIX DAILY ROUNDS</div>
-  <h1 class="title">Monthly PM Work Orders</h1>
-  <p class="subtitle">
-    Quick reference for technicians.<br>
-    Use the same monthly work order and log labor in the Labor Tasks tab.
-  </p>
-</div>
+      <div class="header">
+        <div class="badge pop d1">FIIX DAILY ROUNDS</div>
+        <h1 class="title pop d2">Monthly PM Work Orders</h1>
+        <p class="subtitle pop d3">Quick reference for technicians. Use the same monthly work order and log labor in the Labor Tasks tab.</p>
+      </div>
 
-<div class="card">
+      <div class="card">
 
-  <div class="section-head">
-    <span class="section-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="8" y="2" width="8" height="4" rx="1"/>
-        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-        <path d="M9 12h6"/><path d="M9 16h6"/>
-      </svg>
-    </span>
-    <h2>PMs to open in Fiix</h2>
-  </div>
+        <div class="section pop d4">
+          <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span>
+          <h2>PMs to open in Fiix</h2>
+        </div>
 
-  <div class="rows">
-    <div class="row reveal" id="row-1">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-1">Loading&hellip;</span>
-      <span class="wo" id="wo-1">&mdash;</span>
-    </div>
-    <div class="row reveal" id="row-2">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-2">Loading&hellip;</span>
-      <span class="wo" id="wo-2">&mdash;</span>
-    </div>
-    <div class="row reveal" id="row-3">
-      <span class="file-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
-      <span class="row-title" id="title-3">Loading&hellip;</span>
-      <span class="wo" id="wo-3">&mdash;</span>
+        <div class="rows">
+          <div class="row pop d5">
+            <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span>
+            <div class="row-title" id="title-1">Loading…</div>
+            <span class="wo" id="wo-1">—</span>
+          </div>
+          <div class="row pop d6">
+            <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span>
+            <div class="row-title" id="title-2">Loading…</div>
+            <span class="wo" id="wo-2">—</span>
+          </div>
+          <div class="row pop d7">
+            <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span>
+            <div class="row-title" id="title-3">Loading…</div>
+            <span class="wo" id="wo-3">—</span>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section pop d8">
+          <span class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <h2>How to log labor</h2>
+        </div>
+
+        <ol class="steps">
+          <li class="step pop d9"><span class="num">1</span><span>Open the monthly PM work order.</span></li>
+          <li class="step pop d10"><span class="num">2</span><span>Go to Labor Tasks and add a new line.</span></li>
+          <li class="step pop d11"><span class="num">3</span><span>In Description, enter the date first.</span></li>
+          <li class="step pop d12"><span class="num">4</span><span>Select your name, enter hours, then save and exit.</span></li>
+        </ol>
+
+        <div class="warning pop" role="alert">
+          <span class="ico"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <div><strong>DO NOT CLOSE THE WORK ORDER</strong> — leave it open for the next technician.</div>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <hr class="divider">
-
-  <div class="section-head reveal" id="labor-head">
-    <span class="section-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-    </span>
-    <h2>How to log labor</h2>
-  </div>
-
-  <ol class="steps">
-    <li class="step reveal" id="step-1"><span class="num">1</span><span>Open the monthly PM work order.</span></li>
-    <li class="step reveal" id="step-2"><span class="num">2</span><span>Go to Labor Tasks and add a new line.</span></li>
-    <li class="step reveal" id="step-3"><span class="num">3</span><span>In Description, enter the date first.</span></li>
-    <li class="step reveal" id="step-4"><span class="num">4</span><span>Select your name, enter hours spent, then save and exit.</span></li>
-  </ol>
-
-  <div class="warning" id="warn-box" role="alert">
-    <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-    </span>
-    <div><strong>DO NOT CLOSE THE WORK ORDER</strong> &mdash; leave it open for the next technician.</div>
-  </div>
-
-</div>
-```
-
-  </div>
+  <div class="progress"><div class="progress-fill"></div></div>
 </div>
 
 <script>
 /* =================================================================
    ===>  EDIT YOUR DATA HERE EACH MONTH  <===
-   1) Change MONTH (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG,
-                    SEP, OCT, NOV, DEC).
+   1) Change MONTH (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC).
    2) Update each "wo" number to match the new monthly work order.
+   (Optional) Change the accent color: edit  --accent  near the top of <style>.
 ================================================================= */
-
 var MONTH = "JUN";
 
 var WORK_ORDERS = [
@@ -511,71 +182,37 @@ var WORK_ORDERS = [
   { name: "Refrigeration Round Checklist", wo: "6727" },
   { name: "Plant Round Checklist",         wo: "6726" }
 ];
-
 /* =================================================================
    No need to edit below this line.
 ================================================================= */
-
 (function () {
-  function setText(id, text) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (typeof el.textContent !== "undefined") el.textContent = text;
-    else el.innerText = text;
-  }
   for (var i = 0; i < 3; i++) {
     var item = WORK_ORDERS[i] || { name: "", wo: "" };
-    setText("title-" + (i + 1), MONTH + " - " + item.name);
-    setText("wo-" + (i + 1), "WO " + item.wo);
+    var t = document.getElementById("title-" + (i + 1));
+    var w = document.getElementById("wo-" + (i + 1));
+    if (t) t.innerHTML = '<span class="mo"></span><span class="dash">—</span>';
+    if (t) { t.querySelector(".mo").textContent = MONTH; t.appendChild(document.createTextNode(item.name)); }
+    if (w) w.textContent = "WO " + item.wo;
   }
 
-  /* ---------------------------------------------------------------
-     Fit-to-screen: measure the stage's natural size, then scale
-     it down so it always fits the viewport, no matter the screen.
-  ---------------------------------------------------------------- */
+  /* Fit the 1920px design to any screen, preserving aspect ratio. */
   var stage = document.getElementById("stage");
-
-  function setTransform(scale) {
+  function fit() {
     if (!stage) return;
-    var v = "scale(" + scale + ")";
-    stage.style.webkitTransform = v;
-    stage.style.msTransform     = v;
-    stage.style.transform       = v;
-  }
-
-  function fitStage() {
-    if (!stage) return;
-    var w = window.innerWidth  || document.documentElement.clientWidth  || document.body.clientWidth  || 0;
-    var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
+    var wrap = stage.parentNode;
+    var w = wrap.clientWidth, h = wrap.clientHeight;
     if (w < 50 || h < 50) return;
-
-    // Reset to natural size before measuring
-    setTransform(1);
-
-    var sw = stage.offsetWidth  || 1920;
-    var sh = stage.offsetHeight || 1080;
-    if (!sw || !sh) return;
-
+    stage.style.transform = "scale(1)";
+    var sw = stage.offsetWidth || 1920, sh = stage.offsetHeight || 1080;
     var scale = Math.min(w / sw, h / sh);
-    if (!scale || !isFinite(scale) || scale <= 0) return;
-
-    setTransform(scale);
+    if (!isFinite(scale) || scale <= 0) return;
+    stage.style.transform = "scale(" + scale + ")";
   }
-
-  fitStage();
-  if (window.addEventListener) {
-    window.addEventListener("load",              fitStage, false);
-    window.addEventListener("resize",            fitStage, false);
-    window.addEventListener("orientationchange", fitStage, false);
-  } else if (window.attachEvent) {
-    window.attachEvent("onload",   fitStage);
-    window.attachEvent("onresize", fitStage);
-  }
-  // Some signage WebViews report 0x0 on first paint -- retry a few times
-  setTimeout(fitStage, 100);
-  setTimeout(fitStage, 500);
-  setTimeout(fitStage, 1500);
-  setTimeout(fitStage, 4000);
+  fit();
+  window.addEventListener("load", fit);
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", fit);
+  setTimeout(fit, 100); setTimeout(fit, 500); setTimeout(fit, 1500); setTimeout(fit, 4000);
 })();
 </script>
 
